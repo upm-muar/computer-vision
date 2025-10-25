@@ -39,11 +39,13 @@ mask_otsu = imbinarize(b_channel);
 figure('Name', 'Custom Mask vs Otsu Mask')
 subplot(1, 2, 1)
 imshow(~mask)
-title('Custom Mask', 'interpreter', 'latex', 'FontSize', 14)
+% title('Otsu Mask', 'interpreter', 'latex', 'FontSize', 14)
+title('(a)', 'interpreter', 'latex', 'FontSize', 14, 'Units', 'normalized', 'Position', [0.5, -0.05, 0])
 
 subplot(1, 2, 2)
 imshow(~mask_otsu)
-title('Otsu Mask', 'interpreter', 'latex', 'FontSize', 14)
+title('(b)', 'interpreter', 'latex', 'FontSize', 14, 'Units', 'normalized', 'Position', [0.5, -0.05, 0])
+% title('Otsu Mask', 'interpreter', 'latex', 'FontSize', 14)
 
 %% Object Extraction
 mask3d = repmat(mask, [1, 1, 3]);
