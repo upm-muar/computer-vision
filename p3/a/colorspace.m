@@ -3,7 +3,7 @@ clc;
 
 % Load image
 % img = imread('IMG_1525.heic');
-img = imread('IMG_1525.png');
+img = imread('../../assets/IMG_1525.png');
 rgb = im2double(img);
 % Convert to colorspaces
 lab = rgb2lab(rgb);
