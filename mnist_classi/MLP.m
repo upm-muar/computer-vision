@@ -4,8 +4,23 @@ set(groot, 'defaultTextInterpreter', 'latex');
 set(groot, 'defaultLegendInterpreter', 'latex');
 set(groot, 'defaultAxesTickLabelInterpreter', 'latex');
 
-[XTrain,YTrain,anglesTrain] = digitTrain4DArrayData;
-[XTest,YTest,anglesTest] = digitTest4DArrayData;
+load('digits.mat')
+
+% [XTrain,YTrain,anglesTrain] = digitTrain4DArrayData;
+% [XTest,YTest,anglesTest] = digitTest4DArrayData;
+
+XTrain = reshape(digits.image, 28, 28, 1, length(digits.image)) / 255;
+YTrain = categorical(digits.label');
+
+% Split data: first half for training, second half for validation
+n_total = size(XTrain, 4);
+n_train = floor(n_total / 2);
+
+XVal = XTrain(:,:,1,n_train+1:end);
+YVal = YTrain(n_train+1:end,1);
+
+XTrain = XTrain(:,:,1,1:n_train);
+YTrain = YTrain(1:n_train,1);
 
 layers = [
     imageInputLayer([28 28 1])
@@ -23,21 +38,20 @@ options = trainingOptions('adam', ...
     LearnRateDropPeriod=2, ...
     MaxEpochs=10, ...
     Shuffle='every-epoch', ...
-    ValidationData={XTest,YTest}, ...
-    ValidationFrequency=10, ...
+    ValidationData={XVal,YVal}, ...
     Plots='training-progress');
 
 net = trainNetwork(XTrain, YTrain, layers, options);
 
-YPred = classify(net, XTest);
-accuracy = sum(YPred == YTest) / numel(YTest);
-disp("Test Accuracy: " + string(accuracy * 100) + "%");
+YPred = classify(net, XTrain);
+accuracy = sum(YPred == YTrain) / numel(YTrain);
+disp("Train Accuracy: " + string(accuracy * 100) + "%");
 
-figure('Name', 'Confusion Matrix')
-cm = confusionchart(YTest, YPred, ...
-    'RowSummary', 'row-normalized', 'ColumnSummary', 'column-normalized');
-cm.Title = 'Confusion Matrix';
-cm.XLabel = 'Predicted Class';
-cm.YLabel = 'True Class';
+% figure('Name', 'Confusion Matrix')
+% cm = confusionchart(YTest, YPred, ...
+%     'RowSummary', 'row-normalized', 'ColumnSummary', 'column-normalized');
+% cm.Title = 'Confusion Matrix';
+% cm.XLabel = 'Predicted Class';
+% cm.YLabel = 'True Class';
 
 save('mlp_net.mat', 'net')
